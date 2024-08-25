@@ -267,8 +267,8 @@
             errorMessage.innerText = ''; // Clear previous errors
 
             const apiUrl = mode === 'sfw' 
-                ? `https://decordapi.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&image=6`
-                : `https://deadimage.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&image=6`;
+                ? `https://decorn-api.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&image=6`
+                : `https://dead-imageapi.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&image=6`;
 
             try {
                 const response = await fetch(apiUrl);
