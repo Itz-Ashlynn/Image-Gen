@@ -187,7 +187,7 @@
             errorMessage.innerText = ''; // Clear previous errors
 
             try {
-                const response = await fetch(`https://decordapi.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&image=6`);
+                const response = await fetch(`https://deadimage.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&image=6`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
