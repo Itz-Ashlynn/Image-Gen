@@ -250,15 +250,17 @@
     <div class="watermark">Made by ASHLYNN</div>
 
     <script>
+        // Function to fetch images from an API
         async function fetchImages(apiUrl) {
             const response = await fetch(apiUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            return data.image_urls;
+            return data.image_urls;  // Get the image URLs from the response
         }
-    
+
+        // Main function to generate images
         async function generateImages() {
             const prompt = document.getElementById('prompt').value;
             const apiSelect = document.getElementById('apiSelect').value;
@@ -267,10 +269,10 @@
             const loadingContainer = document.getElementById('loadingContainer');
     
             loadingContainer.classList.add('active');
-            imageContainer.innerHTML = '';
-            errorMessage.innerText = '';
+            imageContainer.innerHTML = '';  // Clear any previous images
+            errorMessage.innerText = '';  // Clear any error message
     
-            let apiUrl1, apiUrl2;
+            let apiUrl1, apiUrl2;  // Two API URLs for each mode
             switch(apiSelect) {
                 case 'pollination':
                     apiUrl1 = `https://pollination-ai.ashlynn.workers.dev/?query=${encodeURIComponent(prompt)}`;
@@ -285,8 +287,8 @@
                     apiUrl2 = `https://prodia.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}`;
                     break;
                 case 'anime':
-                    apiUrl1 = `https://emi.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}`;
-                    apiUrl2 = `https://emi.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}`;
+                    apiUrl1 = `https://ashlynn-repo.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&model=prodia-stablediffusion`;
+                    apiUrl2 = `https://ashlynn-repo.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&model=prodia-stablediffusion`;
                     break;
                 default:
                     errorMessage.innerText = 'Invalid API selected.';
@@ -295,9 +297,10 @@
             }
     
             try {
+                // Fetch images from both API URLs
                 const images1 = await fetchImages(apiUrl1);
                 const images2 = await fetchImages(apiUrl2);
-                const allImages = images1.concat(images2);
+                const allImages = images1.concat(images2);  // Combine both sets of images
     
                 if (allImages.length > 0) {
                     allImages.forEach((imageUrl, index) => {
@@ -305,19 +308,20 @@
                         imageWrapper.classList.add('image-wrapper');
     
                         const imgElement = document.createElement('img');
-                        imgElement.src = imageUrl;
+                        imgElement.src = imageUrl;  // Set the image URL from the API response
                         imgElement.alt = 'Generated Image';
-                        imgElement.crossOrigin = "anonymous";
+                        imgElement.crossOrigin = "anonymous";  // Handle CORS
                         imageWrapper.appendChild(imgElement);
     
+                        // Add download button
                         const downloadLink = document.createElement('a');
-                        downloadLink.href = imageUrl;
-                        downloadLink.download = `generated-image-${Date.now()}-${index + 1}.png`;
+                        downloadLink.href = imageUrl;  // URL for downloading the image
+                        downloadLink.download = `generated-image-${Date.now()}-${index + 1}`;  // Dynamic file name
                         downloadLink.classList.add('download-button');
                         downloadLink.innerText = 'Download';
                         imageWrapper.appendChild(downloadLink);
     
-                        imageContainer.appendChild(imageWrapper);
+                        imageContainer.appendChild(imageWrapper);  // Add the image wrapper to the container
                     });
                 } else {
                     errorMessage.innerText = 'Failed to generate images. Please try again.';
@@ -332,10 +336,11 @@
     </script>
     
     <script>
+        // Script to handle downloads in a new tab
         document.addEventListener('DOMContentLoaded', () => {
             const imageContainer = document.getElementById('imageContainer');
     
-            // Event delegation to handle all download links
+            // Event delegation to handle all download buttons
             imageContainer.addEventListener('click', function (event) {
                 if (event.target.classList.contains('download-button')) {
                     event.preventDefault();  // Prevent default link behavior
@@ -346,6 +351,6 @@
                 }
             });
         });
-    </script>    
+    </script>
 </body>
 </html>
