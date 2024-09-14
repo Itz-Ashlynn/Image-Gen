@@ -241,7 +241,7 @@
 
     <div class="loading-container" id="loadingContainer">
         <div class="loading-ring"></div>
-        <div class="loading-text">Generating Images... Please wait upto 1 min..</div>
+        <div class="loading-text">Generating Images... Please wait up to 1 min..</div>
     </div>
 
     <div class="image-container" id="imageContainer"></div>
@@ -250,17 +250,24 @@
     <div class="watermark">Made by ASHLYNN</div>
 
     <script>
-        // Function to fetch images from the API
+        // Function to fetch images from the API with improved error logging
         async function fetchImages(apiUrl) {
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            try {
+                const response = await fetch(apiUrl, { method: 'GET' });
+                console.log('API Response:', response); // Log the whole response to see what's going on
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('API Data:', data); // Log the data to see if it matches the expected format
+                return data.image_urls;  // Extract the image URLs
+            } catch (error) {
+                console.error('Error fetching images from API:', error);
+                throw error;  // Rethrow the error to be handled in the calling function
             }
-            const data = await response.json();
-            return data.image_urls;  // Get image URLs from the response
         }
 
-        // Main function to generate images
+        // Main function to generate images with improved error handling
         async function generateImages() {
             const prompt = document.getElementById('prompt').value.trim();
             const apiSelect = document.getElementById('apiSelect').value;
@@ -338,8 +345,9 @@
                     errorMessage.innerText = 'No images generated. Try again with a different prompt.';
                 }
             } catch (error) {
+                // Log the error and show a user-friendly message
                 console.error('Error generating images:', error);
-                errorMessage.innerText = 'An error occurred while generating images.';
+                errorMessage.innerText = 'An error occurred while generating images. Please check the console for more details.';
             } finally {
                 // Hide loading
                 loadingContainer.classList.remove('active');
