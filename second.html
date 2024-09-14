@@ -250,29 +250,38 @@
     <div class="watermark">Made by ASHLYNN</div>
 
     <script>
-        // Function to fetch images from an API
+        // Function to fetch images from the API
         async function fetchImages(apiUrl) {
             const response = await fetch(apiUrl);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            return data.image_urls;  // Get the image URLs from the response
+            return data.image_urls;  // Get image URLs from the response
         }
 
         // Main function to generate images
         async function generateImages() {
-            const prompt = document.getElementById('prompt').value;
+            const prompt = document.getElementById('prompt').value.trim();
             const apiSelect = document.getElementById('apiSelect').value;
             const imageContainer = document.getElementById('imageContainer');
             const errorMessage = document.getElementById('errorMessage');
             const loadingContainer = document.getElementById('loadingContainer');
-    
+
+            // Show loading
             loadingContainer.classList.add('active');
-            imageContainer.innerHTML = '';  // Clear any previous images
-            errorMessage.innerText = '';  // Clear any error message
-    
-            let apiUrl1, apiUrl2;  // Two API URLs for each mode
+            imageContainer.innerHTML = '';  // Clear previous images
+            errorMessage.innerText = '';  // Clear error message
+
+            // Validate prompt
+            if (!prompt) {
+                errorMessage.innerText = 'Please enter a prompt to generate images.';
+                loadingContainer.classList.remove('active');
+                return;
+            }
+
+            // Define API URLs based on selection
+            let apiUrl1, apiUrl2;
             switch(apiSelect) {
                 case 'pollination':
                     apiUrl1 = `https://pollination-ai.ashlynn.workers.dev/?query=${encodeURIComponent(prompt)}`;
@@ -295,58 +304,57 @@
                     loadingContainer.classList.remove('active');
                     return;
             }
-    
+
             try {
                 // Fetch images from both API URLs
                 const images1 = await fetchImages(apiUrl1);
                 const images2 = await fetchImages(apiUrl2);
-                const allImages = images1.concat(images2);  // Combine both sets of images
-    
+                const allImages = images1.concat(images2);
+
                 if (allImages.length > 0) {
+                    // Loop through images and add them to the container
                     allImages.forEach((imageUrl, index) => {
                         const imageWrapper = document.createElement('div');
                         imageWrapper.classList.add('image-wrapper');
-    
+
                         const imgElement = document.createElement('img');
-                        imgElement.src = imageUrl;  // Set the image URL from the API response
+                        imgElement.src = imageUrl;
                         imgElement.alt = 'Generated Image';
                         imgElement.crossOrigin = "anonymous";  // Handle CORS
                         imageWrapper.appendChild(imgElement);
-    
+
                         // Add download button
                         const downloadLink = document.createElement('a');
-                        downloadLink.href = imageUrl;  // URL for downloading the image
+                        downloadLink.href = imageUrl;
                         downloadLink.download = `generated-image-${Date.now()}-${index + 1}`;  // Dynamic file name
                         downloadLink.classList.add('download-button');
                         downloadLink.innerText = 'Download';
                         imageWrapper.appendChild(downloadLink);
-    
-                        imageContainer.appendChild(imageWrapper);  // Add the image wrapper to the container
+
+                        // Append image wrapper to container
+                        imageContainer.appendChild(imageWrapper);
                     });
                 } else {
-                    errorMessage.innerText = 'Failed to generate images. Please try again.';
+                    errorMessage.innerText = 'No images generated. Try again with a different prompt.';
                 }
             } catch (error) {
                 console.error('Error generating images:', error);
                 errorMessage.innerText = 'An error occurred while generating images.';
             } finally {
+                // Hide loading
                 loadingContainer.classList.remove('active');
             }
         }
     </script>
-    
+
     <script>
-        // Script to handle downloads in a new tab
+        // Handle download in new tab
         document.addEventListener('DOMContentLoaded', () => {
             const imageContainer = document.getElementById('imageContainer');
-    
-            // Event delegation to handle all download buttons
             imageContainer.addEventListener('click', function (event) {
                 if (event.target.classList.contains('download-button')) {
                     event.preventDefault();  // Prevent default link behavior
                     const downloadUrl = event.target.href;
-    
-                    // Open the download link in a new tab
                     window.open(downloadUrl, '_blank');
                 }
             });
