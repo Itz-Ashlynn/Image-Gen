@@ -232,9 +232,11 @@
         <input type="text" id="prompt" placeholder="Enter your image prompt">
         <select id="apiSelect">
             <option value="pollination">Pollination</option>
-            <option value="dalle">DALL-E</option>
+            <option value="dalle">Anime AI</option>
             <option value="prodia">Prodia</option>
-            <option value="anime">Stablediffusion</option>
+            <option value="anime">Prodia-SDXL</option>
+            <option value="sdxl">Stablediffusion</option>
+            <option value="lora">Stablediffusion Lora</option>
         </select>
         <button onclick="generateImages()">Generate</button>
     </div>
@@ -302,10 +304,18 @@
                     apiUrl1 = `https://prodia.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}`;
                     apiUrl2 = `https://prodia.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}`;
                     break;
+                case 'sdxl':
+                    apiUrl1 = `https://stablediffuisionn.darkhacker7301.workers.dev/?prompt=${encodeURIComponent(prompt)}`;
+                    apiUrl2 = `https://stablediffuisionn.darkhacker7301.workers.dev/?prompt=${encodeURIComponent(prompt)}`;
+                    break;    
                 case 'anime':
                     apiUrl1 = `https://ashlynn-repo.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&model=prodia-stablediffusion`;
                     apiUrl2 = `https://ashlynn-repo.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&model=prodia-stablediffusion`;
                     break;
+                case 'lora':
+                    apiUrl1 = `https://ashlynn-repo.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&model=sdxl-lora`;
+                    apiUrl2 = `https://ashlynn-repo.ashlynn.workers.dev/?prompt=${encodeURIComponent(prompt)}&model=sdxl-lora`;
+                    break;    
                 default:
                     errorMessage.innerText = 'Invalid API selected.';
                     loadingContainer.classList.remove('active');
